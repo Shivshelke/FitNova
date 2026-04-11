@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/theme.dart';
-import '../../data/providers/auth_provider.dart';
-import '../../data/providers/goal_provider.dart';
-import '../../data/providers/progress_provider.dart';
+import '../../../core/theme.dart';
+import '../../../data/providers/auth_provider.dart';
+import '../../../data/providers/goal_provider.dart';
+import '../../../data/providers/progress_provider.dart';
 
 /// Home / Dashboard screen
 /// Shows daily summary: steps, calories, water, macros, goals
