@@ -3,8 +3,6 @@ name: 🏋️ FitNova APK Build
 on:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
@@ -13,83 +11,60 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ── 1. Checkout ────────────────────────────────────────────────────
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v4
+      - name: 📥 Checkout
+        uses: actions/checkout@v3
 
-      # ── 2. Java Setup ──────────────────────────────────────────────────
       - name: ☕ Setup Java 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # ── 3. Flutter Setup ───────────────────────────────────────────────
-      - name: 🐦 Setup Flutter
+      - name: 🐦 Setup Flutter 3.19.6
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.6'
           channel: 'stable'
-          cache: true
 
-      - name: ✅ Flutter Version
-        run: flutter --version
-
-      # ── 4. Create fresh Flutter project alongside, then merge ──────────
-      - name: 🏗️ Bootstrap Flutter Android Project
+      - name: 🏗️ Create Flutter Scaffold + Merge Our Code
         run: |
-          # Create a fresh Flutter project in a temp location
-          flutter create --project-name fitnova --org com.fitnova --platforms android /tmp/fitnova_scaffold
+          # Step 1: Create fresh Flutter project in temp
+          flutter create --project-name fitnova --org com.fitnova --platforms android /tmp/fresh_fitnova
           
-          # Copy essential Android scaffold files that we don't have
-          cp -r /tmp/fitnova_scaffold/android/gradle         flutter_app/android/
-          cp    /tmp/fitnova_scaffold/android/gradlew        flutter_app/android/
-          cp    /tmp/fitnova_scaffold/android/gradlew.bat    flutter_app/android/
-          cp    /tmp/fitnova_scaffold/android/build.gradle   flutter_app/android/
-          cp    /tmp/fitnova_scaffold/android/settings.gradle flutter_app/android/
-          cp    /tmp/fitnova_scaffold/android/gradle.properties flutter_app/android/
+          # Step 2: Replace generated lib/ with our custom lib/
+          rm -rf /tmp/fresh_fitnova/lib
+          cp -r flutter_app/lib /tmp/fresh_fitnova/lib
           
-          # Copy app-level scaffold files we haven't customised
-          mkdir -p flutter_app/android/app/src/main/kotlin/com/fitnova/fitnova
-          mkdir -p flutter_app/android/app/src/main/res
-          cp -r /tmp/fitnova_scaffold/android/app/src/main/res/   flutter_app/android/app/src/main/res/
-          cp    /tmp/fitnova_scaffold/android/app/src/main/AndroidManifest.xml flutter_app/android/app/src/main/AndroidManifest.xml
-          cp    /tmp/fitnova_scaffold/android/app/src/main/kotlin/com/fitnova/fitnova/MainActivity.kt flutter_app/android/app/src/main/kotlin/com/fitnova/fitnova/MainActivity.kt
+          # Step 3: Replace generated pubspec.yaml with ours
+          cp flutter_app/pubspec.yaml /tmp/fresh_fitnova/pubspec.yaml
           
-          # Make gradlew executable
-          chmod +x flutter_app/android/gradlew
+          # Step 4: Set minSdkVersion to 21 (for flutter_secure_storage)
+          sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/' \
+            /tmp/fresh_fitnova/android/app/build.gradle
           
-          echo "✅ Android scaffold files copied"
-          ls flutter_app/android/
+          echo "=== Project structure ==="
+          ls /tmp/fresh_fitnova/
 
-      # ── 5. Install dependencies ────────────────────────────────────────
-      - name: 📦 flutter pub get
-        working-directory: flutter_app
+      - name: 📦 Flutter Pub Get
+        working-directory: /tmp/fresh_fitnova
         run: flutter pub get
 
-      # ── 6. Fix import issues if any ────────────────────────────────────
-      - name: 🔍 Analyze (non-blocking)
-        working-directory: flutter_app
-        run: flutter analyze --no-fatal-infos || true
+      - name: 🔍 Analyze (non-fatal)
+        working-directory: /tmp/fresh_fitnova
+        run: flutter analyze --no-fatal-infos 2>&1 || true
 
-      # ── 7. Build APK ───────────────────────────────────────────────────
       - name: 🔨 Build Debug APK
-        working-directory: flutter_app
-        run: flutter build apk --debug
+        working-directory: /tmp/fresh_fitnova
+        run: flutter build apk --debug 2>&1
 
-      # ── 8. Upload APK ──────────────────────────────────────────────────
-      - name: 📤 Upload APK Artifact
-        uses: actions/upload-artifact@v4
+      - name: 📤 Upload APK
+        uses: actions/upload-artifact@v3
         with:
           name: FitNova-debug-APK
-          path: flutter_app/build/app/outputs/flutter-apk/app-debug.apk
+          path: /tmp/fresh_fitnova/build/app/outputs/flutter-apk/app-debug.apk
           retention-days: 30
 
-      # ── 9. Summary ─────────────────────────────────────────────────────
-      - name: 📊 Build Summary
-        working-directory: flutter_app
+      - name: ✅ Done
         run: |
-          echo "✅ FitNova APK Build Successful!"
-          ls -lh build/app/outputs/flutter-apk/app-debug.apk
-          echo ""
-          echo "📱 Download APK from: Actions → This Run → Artifacts → FitNova-debug-APK"
+          echo "APK built successfully!"
+          ls -lh /tmp/fresh_fitnova/build/app/outputs/flutter-apk/app-debug.apk
