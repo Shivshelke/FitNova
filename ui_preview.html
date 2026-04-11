@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitNova — UI Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:   #6C63FF;
+      --primary-l: #8B85FF;
+      --accent:    #00D4FF;
+      --green:     #00E5A0;
+      --orange:    #FF6B35;
+      --pink:      #FF4D8D;
+      --bg:        #0E0E1A;
+      --surface:   #1A1A2E;
+      --surface2:  #252540;
+      --border:    #2E2E50;
+      --text:      #E8E8FF;
+      --muted:     #8888AA;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #05050F;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px 60px;
+      color: var(--text);
+    }
+
+    h1.page-title {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 40px; text-align: center; }
+
+    /* ─── Screen Navigator ──────────────────────────────────────────── */
+    .screen-tabs {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      justify-content: center; margin-bottom: 32px;
+    }
+    .tab-btn {
+      padding: 8px 18px; border-radius: 20px;
+      border: 1.5px solid var(--border);
+      background: var(--surface); color: var(--muted);
+      cursor: pointer; font-family: 'Poppins', sans-serif; font-size: 12px; font-weight: 500;
+      transition: all .2s;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      border-color: var(--primary); background: rgba(108,99,255,.2); color: var(--primary);
+    }
+
+    /* ─── Phone Shell ───────────────────────────────────────────────── */
+    .phone-wrap {
+      position: relative;
+      display: flex; gap: 32px;
+      flex-wrap: wrap; justify-content: center;
+    }
+
+    .phone {
+      width: 360px;
+      border-radius: 44px;
+      border: 3px solid #333355;
+      background: var(--bg);
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(108,99,255,.25), 0 0 0 8px #0a0a18;
+      position: relative;
+    }
+
+    /* Status bar */
+    .status-bar {
+      background: var(--surface);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 20px 8px;
+      font-size: 11px; color: var(--muted);
+    }
+
+    /* Screen content container */
+    .screen { display: none; flex-direction: column; height: 780px; }
+    .screen.active { display: flex; }
+    .screen-body {
+      flex: 1; overflow-y: auto; padding: 0;
+      scrollbar-width: none;
+    }
+    .screen-body::-webkit-scrollbar { display: none; }
+
+    /* ─── Bottom Nav ────────────────────────────────────────────────── */
+    .bottom-nav {
+      display: flex; background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 8px 0 12px;
+    }
+    .nav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; gap: 3px; cursor: pointer;
+      padding: 6px 4px; border-radius: 12px;
+      transition: all .2s; margin: 0 4px;
+    }
+    .nav-item.active { background: rgba(108,99,255,.15); }
+    .nav-icon {
+      font-size: 20px;
+      filter: grayscale(1) opacity(.5);
+      transition: all .2s;
+    }
+    .nav-item.active .nav-icon { filter: none; }
+    .nav-label {
+      font-size: 9px; color: var(--muted); font-weight: 500;
+    }
+    .nav-item.active .nav-label { color: var(--primary); font-weight: 600; }
+
+    /* ─── Common ─────────────────────────────────────────────────────── */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 18px; padding: 18px; margin: 0 16px 14px;
+    }
+    .gradient-card {
+      background: linear-gradient(135deg, #1E1E35, #252545);
+      border: 1px solid var(--border); border-radius: 18px;
+      padding: 18px; margin: 0 16px 14px;
+    }
+    .section-title {
+      font-size: 14px; font-weight: 600; color: var(--text);
+      padding: 0 16px 10px;
+    }
+
+    /* ─── SPLASH ─────────────────────────────────────────────────────── */
+    #splash .screen-body {
+      background: linear-gradient(180deg, var(--bg), #1A0A2E);
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center; gap: 16px;
+      padding: 40px;
+    }
+    .logo-box {
+      width: 100px; height: 100px; border-radius: 28px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 50px;
+      box-shadow: 0 0 40px rgba(108,99,255,.5);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { transform: scale(1); box-shadow: 0 0 30px rgba(108,99,255,.4); }
+      50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(108,99,255,.6); }
+    }
+    .app-name-grad {
+      font-size: 40px; font-weight: 800; letter-spacing: 3px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .splash-sub { color: var(--muted); font-size: 14px; letter-spacing: 1px; }
+    .dots { display: flex; gap: 8px; margin-top: 20px; }
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--primary);
+      animation: blink 1.5s ease-in-out infinite;
+    }
+    .dot:nth-child(2) { animation-delay: .25s; }
+    .dot:nth-child(3) { animation-delay: .5s; }
+    @keyframes blink { 0%,100% { opacity:.2; } 50% { opacity:1; } }
+
+    /* ─── LOGIN ──────────────────────────────────────────────────────── */
+    #login .screen-body {
+      background: var(--bg); padding: 32px 20px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .brand-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .brand-icon {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex; align-items: center; justify-content: center; font-size: 18px;
+    }
+    .brand-text {
+      font-size: 22px; font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .screen-heading { font-size: 22px; font-weight: 700; color: var(--text); }
+    .screen-sub { font-size: 12px; color: var(--muted); }
+    .field-label { font-size: 12px; font-weight: 500; color: var(--text); }
+    .mock-input {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 14px;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: var(--muted);
+    }
+    .mock-input.focused { border-color: var(--primary); border-width: 2px; }
+    .btn-grad {
+      border-radius: 14px; padding: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      text-align: center; font-size: 14px; font-weight: 600;
+      color: #fff; cursor: pointer;
+      box-shadow: 0 8px 20px rgba(108,99,255,.4);
+    }
+    .btn-outline {
+      border-radius: 14px; padding: 13px;
+      border: 1.5px solid var(--border);
+      text-align: center; font-size: 13px; color: var(--text);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .divider {
+      display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 12px;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .link-row { text-align: center; font-size: 12px; color: var(--muted); }
+    .link-row span { color: var(--primary); font-weight: 600; }
+
+    /* ─── HOME DASHBOARD ─────────────────────────────────────────────── */
+    #home .screen-body { background: var(--bg); }
+    .home-appbar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 16px 12px;
+    }
+    .greeting { font-size: 12px; color: var(--muted); }
+    .user-name { font-size: 20px; font-weight: 700; color: var(--text); }
+    .avatar {
+      width: 44px; height: 44px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700; color: #fff;
+    }
+
+    /* Activity rings */
+    .rings-row { display: flex; justify-content: space-around; padding: 8px 0; }
+    .ring-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .ring-wrap { position: relative; width: 72px; height: 72px; }
+    .ring-bg, .ring-fill {
+      width: 72px; height: 72px; border-radius: 50%;
+      position: absolute; top: 0; left: 0;
+    }
+    .ring-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 24px; }
+    .ring-val { font-size: 14px; font-weight: 700; color: var(--text); }
+    .ring-sub { font-size: 9px; color: var(--muted); text-align: center; }
+    .ring-label { font-size: 11px; color: var(--text); font-weight: 500; }
+
+    /* SVG progress ring */
+    .progress-ring-svg { transform: rotate(-90deg); }
+
+    /* Stats row */
+    .stats-row { display: flex; gap: 10px; padding: 0 16px 14px; }
+    .stat-card {
+      flex: 1; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 6px;
+    }
+    .stat-val { font-size: 16px; font-weight: 700; color: var(--text); }
+    .stat-sub { font-size: 9px; color: var(--muted); }
+
+    /* Macro bars */
+    .macro-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .macro-label { font-size: 11px; color: var(--muted); width: 48px; }
+    .macro-bar-wrap { flex: 1; height: 7px; border-radius: 4px; background: rgba(255,255,255,.1); overflow: hidden; }
+    .macro-bar { height: 100%; border-radius: 4px; }
+    .macro-val { font-size: 11px; font-weight: 500; color: var(--text); width: 32px; text-align: right; }
+
+    /* ─── WORKOUT ─────────────────────────────────────────────────────── */
+    #workout .screen-body { background: var(--bg); }
+    .workout-tabs {
+      display: flex; border-bottom: 1px solid var(--border);
+      padding: 0 16px;
+    }
+    .wtab {
+      flex: 1; padding: 10px 4px; text-align: center;
+      font-size: 12px; color: var(--muted); font-weight: 500;
+      border-bottom: 2px solid transparent;
+    }
+    .wtab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .filter-chips { display: flex; gap: 6px; padding: 10px 16px; overflow-x: auto; }
+    .chip {
+      padding: 5px 14px; border-radius: 16px; font-size: 11px; font-weight: 500;
+      border: 1px solid var(--border); background: var(--surface2); color: var(--muted);
+      white-space: nowrap;
+    }
+    .chip.active { background: rgba(108,99,255,.2); border-color: var(--primary); color: var(--primary); }
+    .workout-card {
+      display: flex; gap: 12px; align-items: center;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 14px; margin: 0 16px 10px;
+    }
+    .wcard-icon {
+      width: 52px; height: 52px; border-radius: 13px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex; align-items: center; justify-content: center; font-size: 22px;
+      flex-shrink: 0;
+    }
+    .wcard-info { flex: 1; }
+    .wcard-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .wcard-meta { font-size: 10px; color: var(--muted); margin-top: 3px; }
+    .wcard-badges { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+    .badge {
+      padding: 3px 8px; border-radius: 6px; font-size: 9px; font-weight: 600;
+    }
+    .badge-int { background: rgba(0,212,255,.15); color: var(--accent); }
+    .badge-home { background: rgba(255,255,255,.08); color: var(--muted); }
+    .badge-adv { background: rgba(255,107,53,.15); color: var(--orange); }
+    .badge-beg { background: rgba(0,229,160,.15); color: var(--green); }
+
+    /* ─── DIET ────────────────────────────────────────────────────────── */
+    #diet .screen-body { background: var(--bg); }
+    .daily-cals {
+      display: flex; gap: 10px; padding: 0 16px 14px;
+    }
+    .macro-box {
+      flex: 1; text-align: center; padding: 12px 6px;
+      border-radius: 12px; border: 1px solid;
+    }
+    .macro-box .m-val { font-size: 16px; font-weight: 700; }
+    .macro-box .m-lbl { font-size: 9px; color: var(--muted); }
+    .meal-section {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; margin: 0 16px 10px;
+    }
+    .meal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 14px;
+    }
+    .meal-title { font-size: 13px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 6px; }
+    .add-btn {
+      width: 26px; height: 26px; border-radius: 8px;
+      background: rgba(108,99,255,.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: var(--primary);
+    }
+    .meal-item { padding: 6px 14px 10px; font-size: 11px; color: var(--muted); }
+    .meal-item strong { color: var(--text); display: block; margin-bottom: 2px; font-size: 12px; }
+    .cal-bar { height: 6px; border-radius: 3px; margin-top: 8px; 
+      background: rgba(108,99,255,.15); overflow: hidden; }
+    .cal-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--primary), var(--accent)); }
+
+    /* ─── PROGRESS ────────────────────────────────────────────────────── */
+    #progress .screen-body { background: var(--bg); }
+    .range-selector {
+      display: flex; background: var(--surface); border-radius: 12px;
+      margin: 0 16px 14px; padding: 4px;
+    }
+    .range-btn {
+      flex: 1; padding: 7px; text-align: center; border-radius: 10px;
+      font-size: 11px; font-weight: 500; color: var(--muted);
+    }
+    .range-btn.active { background: var(--primary); color: #fff; font-weight: 600; }
+    .chart-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 16px; margin: 0 16px 14px;
+    }
+    .chart-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
+    /* Fake SVG charts */
+    .fake-chart { width: 100%; height: 110px; }
+
+    /* ─── GOALS ────────────────────────────────────────────────────────── */
+    #goals .screen-body { background: var(--bg); }
+    .suggestion-card {
+      background: linear-gradient(135deg, #1A0A4E, #0A2540);
+      border: 1px solid rgba(108,99,255,.3); border-radius: 16px;
+      padding: 14px; margin: 0 16px 14px;
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .sug-icon { font-size: 26px; }
+    .sug-title { font-size: 12px; font-weight: 600; color: var(--text); }
+    .sug-text { font-size: 10px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+    .goal-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 14px; margin: 0 16px 10px;
+    }
+    .goal-header { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+    .goal-icon {
+      width: 34px; height: 34px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }
+    .goal-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .goal-sub { font-size: 10px; color: var(--muted); }
+    .goal-prog-row { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 5px; }
+    .prog-bar { height: 7px; border-radius: 4px; overflow: hidden; }
+    .prog-fill { height: 100%; border-radius: 4px; }
+
+    /* ─── PROFILE ─────────────────────────────────────────────────────── */
+    #profile .screen-body { background: var(--bg); }
+    .profile-header {
+      background: linear-gradient(180deg, #1A0A2E, var(--bg));
+      display: flex; flex-direction: column; align-items: center;
+      padding: 28px 20px 20px; gap: 8px;
+    }
+    .profile-avatar {
+      width: 72px; height: 72px; border-radius: 22px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; font-weight: 700; color: #fff;
+      box-shadow: 0 0 30px rgba(108,99,255,.4);
+    }
+    .profile-name { font-size: 18px; font-weight: 700; color: var(--text); }
+    .profile-email { font-size: 11px; color: var(--muted); }
+    .stats-grid { display: flex; gap: 10px; padding: 0 16px 14px; }
+    .p-stat {
+      flex: 1; border-radius: 12px; border: 1px solid; padding: 10px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .p-stat-val { font-size: 14px; font-weight: 700; }
+    .p-stat-lbl { font-size: 9px; color: var(--muted); }
+    .settings-item {
+      display: flex; gap: 12px; align-items: center;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 13px; padding: 12px 14px; margin: 0 16px 8px;
+    }
+    .settings-icon { font-size: 18px; }
+    .settings-info { flex: 1; }
+    .settings-title { font-size: 12px; font-weight: 500; color: var(--text); }
+    .settings-sub { font-size: 10px; color: var(--muted); }
+    .logout-btn {
+      margin: 8px 16px; padding: 13px;
+      border: 1.5px solid rgba(255,77,77,.5); border-radius: 13px;
+      text-align: center; color: #ff4d4d; font-size: 13px; font-weight: 500;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+
+    /* ─── Label ──────────────────────────────────────────────────────── */
+    .screen-label {
+      text-align: center; font-size: 13px; color: var(--muted);
+      margin-top: 12px; font-weight: 500;
+    }
+
+    /* ─── Responsive ─────────────────────────────────────────────────── */
+    @media (max-width: 420px) {
+      .phone { width: 100%; max-width: 380px; }
+    }
+  </style>
+</head>
+<body>
+
+<h1 class="page-title">🏋️ FitNova UI Preview</h1>
+<p class="subtitle">Tap a screen below to preview how the app looks</p>
+
+<!-- Screen selector tabs -->
+<div class="screen-tabs">
+  <button class="tab-btn active" onclick="showScreen('splash', this)">Splash</button>
+  <button class="tab-btn" onclick="showScreen('login', this)">Login</button>
+  <button class="tab-btn" onclick="showScreen('home', this)">Home</button>
+  <button class="tab-btn" onclick="showScreen('workout', this)">Workout</button>
+  <button class="tab-btn" onclick="showScreen('diet', this)">Diet</button>
+  <button class="tab-btn" onclick="showScreen('progress', this)">Progress</button>
+  <button class="tab-btn" onclick="showScreen('goals', this)">Goals</button>
+  <button class="tab-btn" onclick="showScreen('profile', this)">Profile</button>
+</div>
+
+<!-- Phone -->
+<div class="phone-wrap">
+  <div>
+    <div class="phone">
+      <!-- Status bar -->
+      <div class="status-bar">
+        <span>09:41</span>
+        <span style="font-weight:600">FitNova</span>
+        <span>📶 🔋</span>
+      </div>
+
+      <!-- ═══════ SPLASH ═══════ -->
+      <div class="screen active" id="splash">
+        <div class="screen-body" style="background: linear-gradient(180deg, #0E0E1A, #1A0A2E); display:flex; flex-direction:column; justify-content:center; align-items:center; gap:18px; padding:40px;">
+          <div class="logo-box" style="animation:pulse 2s ease-in-out infinite;">💪</div>
+          <div class="app-name-grad">FitNova</div>
+          <div class="splash-sub">Your fitness, elevated.</div>
+          <div class="dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════ LOGIN ═══════ -->
+      <div class="screen" id="login">
+        <div class="screen-body" style="padding:24px 18px; background:var(--bg); display:flex; flex-direction:column; gap:12px;">
+          <div class="brand-row">
+            <div class="brand-icon">💪</div>
+            <div class="brand-text">FitNova</div>
+          </div>
+          <div class="screen-heading">Welcome back! 👋</div>
+          <div class="screen-sub">Login to continue your fitness journey.</div>
+          <div style="height:8px;"></div>
+
+          <div class="field-label">Email</div>
+          <div class="mock-input focused">✉️ <span>shiv@example.com</span></div>
+
+          <div class="field-label">Password</div>
+          <div class="mock-input">🔒 <span>••••••••</span> <span style="margin-left:auto; color:var(--muted);">👁</span></div>
+
+          <div style="height:4px;"></div>
+          <div class="btn-grad">Login</div>
+
+          <div class="divider">or</div>
+
+          <div class="btn-outline">
+            <span style="font-size:20px;">G</span> Continue with Google
+          </div>
+
+          <div class="link-row">Don't have an account? <span>Sign Up</span></div>
+        </div>
+      </div>
+
+      <!-- ═══════ HOME ═══════ -->
+      <div class="screen" id="home">
+        <div class="screen-body">
+          <!-- App bar -->
+          <div class="home-appbar">
+            <div>
+              <div class="greeting">Good Evening! 👋</div>
+              <div class="user-name">Shivam</div>
+            </div>
+            <div class="avatar">S</div>
+          </div>
+
+          <!-- Activity rings card -->
+          <div class="gradient-card">
+            <div style="font-size:13px; font-weight:600; color:var(--text); margin-bottom:14px;">Today's Activity</div>
+            <div class="rings-row">
+              <!-- Steps ring -->
+              <div class="ring-item">
+                <div class="ring-wrap">
+                  <svg class="progress-ring-svg" width="72" height="72" viewBox="0 0 72 72">
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(0,212,255,.15)" stroke-width="7"/>
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="#00D4FF" stroke-width="7"
+                      stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="75"/>
+                  </svg>
+                  <div class="ring-icon">🚶</div>
+                </div>
+                <div class="ring-val">6,240</div>
+                <div class="ring-sub">of 10,000</div>
+                <div class="ring-label">Steps</div>
+              </div>
+              <!-- Calories ring -->
+              <div class="ring-item">
+                <div class="ring-wrap">
+                  <svg class="progress-ring-svg" width="72" height="72" viewBox="0 0 72 72">
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,107,53,.15)" stroke-width="7"/>
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="#FF6B35" stroke-width="7"
+                      stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="60"/>
+                  </svg>
+                  <div class="ring-icon">🔥</div>
+                </div>
+                <div class="ring-val">1,420</div>
+                <div class="ring-sub">of 2000 kcal</div>
+                <div class="ring-label">Calories</div>
+              </div>
+              <!-- Water ring -->
+              <div class="ring-item">
+                <div class="ring-wrap">
+                  <svg class="progress-ring-svg" width="72" height="72" viewBox="0 0 72 72">
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(0,229,160,.15)" stroke-width="7"/>
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="#00E5A0" stroke-width="7"
+                      stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="110"/>
+                  </svg>
+                  <div class="ring-icon">💧</div>
+                </div>
+                <div class="ring-val">1,800</div>
+                <div class="ring-sub">of 2500 ml</div>
+                <div class="ring-label">Water</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats row -->
+          <div class="stats-row">
+            <div class="stat-card">
+              <div style="font-size:18px;">🔥</div>
+              <div class="stat-val" style="color:var(--orange);">480</div>
+              <div class="stat-sub">kcal<br/>Burned</div>
+            </div>
+            <div class="stat-card">
+              <div style="font-size:18px;">⚡</div>
+              <div class="stat-val" style="color:var(--primary);">940</div>
+              <div class="stat-sub">kcal<br/>Net</div>
+            </div>
+            <div class="stat-card">
+              <div style="font-size:18px;">🏋️</div>
+              <div class="stat-val" style="color:var(--pink);">1</div>
+              <div class="stat-sub">Workout<br/>Today</div>
+            </div>
+          </div>
+
+          <!-- Macros -->
+          <div class="card">
+            <div style="font-size:13px; font-weight:600; color:var(--text); margin-bottom:12px;">Today's Macros</div>
+            <div class="macro-row">
+              <div class="macro-label">Protein</div>
+              <div class="macro-bar-wrap"><div class="macro-bar" style="width:65%; background:var(--green);"></div></div>
+              <div class="macro-val">78g</div>
+            </div>
+            <div class="macro-row">
+              <div class="macro-label">Carbs</div>
+              <div class="macro-bar-wrap"><div class="macro-bar" style="width:80%; background:var(--accent);"></div></div>
+              <div class="macro-val">165g</div>
+            </div>
+            <div class="macro-row">
+              <div class="macro-label">Fat</div>
+              <div class="macro-bar-wrap"><div class="macro-bar" style="width:45%; background:var(--orange);"></div></div>
+              <div class="macro-val">38g</div>
+            </div>
+          </div>
+        </div>
+        <!-- Bottom nav -->
+        <div class="bottom-nav">
+          <div class="nav-item active" onclick="showScreen('home', null, 0)"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+          <div class="nav-item" onclick="showScreen('workout', null, 1)"><div class="nav-icon">🏋️</div><div class="nav-label">Workout</div></div>
+          <div class="nav-item" onclick="showScreen('diet', null, 2)"><div class="nav-icon">🥗</div><div class="nav-label">Diet</div></div>
+          <div class="nav-item" onclick="showScreen('goals', null, 3)"><div class="nav-icon">🎯</div><div class="nav-label">Goals</div></div>
+          <div class="nav-item" onclick="showScreen('profile', null, 4)"><div class="nav-icon">👤</div><div class="nav-label">Profile</div></div>
+        </div>
+      </div>
+
+      <!-- ═══════ WORKOUT ═══════ -->
+      <div class="screen" id="workout">
+        <div class="screen-body">
+          <div style="padding:18px 16px 4px; font-size:18px; font-weight:700; color:var(--text);">Workouts</div>
+          <div class="workout-tabs">
+            <div class="wtab active">Browse</div>
+            <div class="wtab">History</div>
+            <div class="wtab">AI Tips</div>
+          </div>
+          <div class="filter-chips">
+            <div class="chip active">All</div>
+            <div class="chip">Gym</div>
+            <div class="chip">Home</div>
+            <div class="chip">Outdoor</div>
+          </div>
+
+          <div class="workout-card">
+            <div class="wcard-icon">🔥</div>
+            <div class="wcard-info">
+              <div class="wcard-name">HIIT Fat Burner</div>
+              <div class="wcard-meta">⏱ 30 min &nbsp; 🔥 ~400 kcal</div>
+            </div>
+            <div class="wcard-badges">
+              <div class="badge badge-int">intermediate</div>
+              <div class="badge badge-home">home</div>
+            </div>
+          </div>
+
+          <div class="workout-card">
+            <div class="wcard-icon">💪</div>
+            <div class="wcard-info">
+              <div class="wcard-name">Upper Body Strength</div>
+              <div class="wcard-meta">⏱ 55 min &nbsp; 🔥 ~320 kcal</div>
+            </div>
+            <div class="wcard-badges">
+              <div class="badge badge-int">intermediate</div>
+              <div class="badge" style="background:rgba(255,255,255,.08); color:var(--muted);">gym</div>
+            </div>
+          </div>
+
+          <div class="workout-card">
+            <div class="wcard-icon">🦵</div>
+            <div class="wcard-info">
+              <div class="wcard-name">Leg Day Power</div>
+              <div class="wcard-meta">⏱ 60 min &nbsp; 🔥 ~450 kcal</div>
+            </div>
+            <div class="wcard-badges">
+              <div class="badge badge-adv">advanced</div>
+              <div class="badge" style="background:rgba(255,255,255,.08); color:var(--muted);">gym</div>
+            </div>
+          </div>
+
+          <div class="workout-card">
+            <div class="wcard-icon">🧘</div>
+            <div class="wcard-info">
+              <div class="wcard-name">Yoga & Flexibility</div>
+              <div class="wcard-meta">⏱ 30 min &nbsp; 🔥 ~120 kcal</div>
+            </div>
+            <div class="wcard-badges">
+              <div class="badge badge-beg">beginner</div>
+              <div class="badge badge-home">home</div>
+            </div>
+          </div>
+
+          <div class="workout-card">
+            <div class="wcard-icon">🏋️</div>
+            <div class="wcard-info">
+              <div class="wcard-name">Beginner Full Body</div>
+              <div class="wcard-meta">⏱ 35 min &nbsp; 🔥 ~220 kcal</div>
+            </div>
+            <div class="wcard-badges">
+              <div class="badge badge-beg">beginner</div>
+              <div class="badge badge-home">home</div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item" onclick="showScreen('home', null, 0)"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+          <div class="nav-item active" onclick="showScreen('workout', null, 1)"><div class="nav-icon">🏋️</div><div class="nav-label">Workout</div></div>
+          <div class="nav-item" onclick="showScreen('diet', null, 2)"><div class="nav-icon">🥗</div><div class="nav-label">Diet</div></div>
+          <div class="nav-item" onclick="showScreen('goals', null, 3)"><div class="nav-icon">🎯</div><div class="nav-label">Goals</div></div>
+          <div class="nav-item" onclick="showScreen('profile', null, 4)"><div class="nav-icon">👤</div><div class="nav-label">Profile</div></div>
+        </div>
+      </div>
+
+      <!-- ═══════ DIET ═══════ -->
+      <div class="screen" id="diet">
+        <div class="screen-body">
+          <div style="padding:18px 16px 4px; font-size:18px; font-weight:700; color:var(--text);">Nutrition</div>
+          <!-- Summary -->
+          <div class="gradient-card" style="margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+              <div style="font-size:13px; font-weight:600; color:var(--text);">Daily Summary</div>
+              <div style="background:rgba(108,99,255,.2); color:var(--primary); padding:3px 10px; border-radius:8px; font-size:11px; font-weight:700;">1,420 kcal</div>
+            </div>
+            <div class="daily-cals">
+              <div class="macro-box" style="background:rgba(0,229,160,.1); border-color:rgba(0,229,160,.3);">
+                <div class="m-val" style="color:var(--green);">78g</div>
+                <div class="m-lbl">Protein</div>
+              </div>
+              <div class="macro-box" style="background:rgba(0,212,255,.1); border-color:rgba(0,212,255,.3);">
+                <div class="m-val" style="color:var(--accent);">165g</div>
+                <div class="m-lbl">Carbs</div>
+              </div>
+              <div class="macro-box" style="background:rgba(255,107,53,.1); border-color:rgba(255,107,53,.3);">
+                <div class="m-val" style="color:var(--orange);">38g</div>
+                <div class="m-lbl">Fat</div>
+              </div>
+            </div>
+            <div style="font-size:10px; color:var(--muted); margin-bottom:5px; margin-top:12px;">1420 / 2000 kcal &nbsp;·&nbsp; 580 remaining</div>
+            <div class="cal-bar"><div class="cal-fill" style="width:71%;"></div></div>
+          </div>
+
+          <!-- Breakfast -->
+          <div class="meal-section">
+            <div class="meal-header">
+              <div class="meal-title">☀️ Breakfast</div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:10px; color:var(--muted);">450 kcal</span>
+                <div class="add-btn">+</div>
+              </div>
+            </div>
+            <div class="meal-item"><strong>Oats + Banana + Milk</strong>P: 20g · C: 65g · F: 8g</div>
+          </div>
+
+          <!-- Lunch -->
+          <div class="meal-section">
+            <div class="meal-header">
+              <div class="meal-title">🍽 Lunch</div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:10px; color:var(--muted);">680 kcal</span>
+                <div class="add-btn">+</div>
+              </div>
+            </div>
+            <div class="meal-item"><strong>Rice + Chicken Breast + Salad</strong>P: 45g · C: 80g · F: 12g</div>
+          </div>
+
+          <!-- Dinner -->
+          <div class="meal-section">
+            <div class="meal-header">
+              <div class="meal-title">🌙 Dinner</div>
+              <div class="add-btn" style="margin-right:2px;">+</div>
+            </div>
+            <div class="meal-item" style="color:var(--border);">No dinner logged yet</div>
+          </div>
+
+          <!-- Snack -->
+          <div class="meal-section">
+            <div class="meal-header">
+              <div class="meal-title">🍎 Snack</div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:10px; color:var(--muted);">290 kcal</span>
+                <div class="add-btn">+</div>
+              </div>
+            </div>
+            <div class="meal-item"><strong>Greek Yogurt + Almonds</strong>P: 13g · C: 20g · F: 18g</div>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item" onclick="showScreen('home', null, 0)"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+          <div class="nav-item" onclick="showScreen('workout', null, 1)"><div class="nav-icon">🏋️</div><div class="nav-label">Workout</div></div>
+          <div class="nav-item active" onclick="showScreen('diet', null, 2)"><div class="nav-icon">🥗</div><div class="nav-label">Diet</div></div>
+          <div class="nav-item" onclick="showScreen('goals', null, 3)"><div class="nav-icon">🎯</div><div class="nav-label">Goals</div></div>
+          <div class="nav-item" onclick="showScreen('profile', null, 4)"><div class="nav-icon">👤</div><div class="nav-label">Profile</div></div>
+        </div>
+      </div>
+
+      <!-- ═══════ PROGRESS ═══════ -->
+      <div class="screen" id="progress">
+        <div class="screen-body">
+          <div style="padding:18px 16px 12px; font-size:18px; font-weight:700; color:var(--text);">Progress</div>
+          <div class="range-selector">
+            <div class="range-btn active">Week</div>
+            <div class="range-btn">Month</div>
+            <div class="range-btn">Year</div>
+          </div>
+
+          <!-- Today Stats -->
+          <div class="card" style="display:flex; gap:10px; padding:14px;">
+            <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+              <div style="font-size:20px;">🚶</div>
+              <div style="color:var(--accent); font-weight:700; font-size:14px;">6,240</div>
+              <div style="font-size:9px; color:var(--muted);">Steps</div>
+            </div>
+            <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+              <div style="font-size:20px;">⚖️</div>
+              <div style="color:var(--green); font-weight:700; font-size:14px;">72.4 kg</div>
+              <div style="font-size:9px; color:var(--muted);">Weight</div>
+            </div>
+            <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+              <div style="font-size:20px;">💧</div>
+              <div style="color:var(--primary); font-weight:700; font-size:14px;">1800 ml</div>
+              <div style="font-size:9px; color:var(--muted);">Water</div>
+            </div>
+          </div>
+
+          <!-- Weight Chart -->
+          <div class="chart-card">
+            <div class="chart-title">⚖️ Weight Trend</div>
+            <svg class="fake-chart" viewBox="0 0 300 100" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="wg" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#00E5A0" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#00E5A0" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M0,70 C30,65 60,75 90,68 C120,60 150,58 180,55 C210,52 240,48 270,44 L270,100 L0,100Z" fill="url(#wg)"/>
+              <path d="M0,70 C30,65 60,75 90,68 C120,60 150,58 180,55 C210,52 240,48 270,44" fill="none" stroke="#00E5A0" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="0" cy="70" r="4" fill="#00E5A0"/>
+              <circle cx="90" cy="68" r="4" fill="#00E5A0"/>
+              <circle cx="180" cy="55" r="4" fill="#00E5A0"/>
+              <circle cx="270" cy="44" r="5" fill="#00E5A0" stroke="#0E0E1A" stroke-width="2"/>
+              <!-- Y axis labels -->
+              <text x="2" y="12" font-size="9" fill="#8888AA">76</text>
+              <text x="2" y="40" font-size="9" fill="#8888AA">74</text>
+              <text x="2" y="70" font-size="9" fill="#8888AA">72</text>
+              <text x="2" y="96" font-size="9" fill="#8888AA">70</text>
+            </svg>
+          </div>
+
+          <!-- Steps Chart -->
+          <div class="chart-card">
+            <div class="chart-title">🏃 Steps History</div>
+            <svg class="fake-chart" viewBox="0 0 300 110" preserveAspectRatio="none">
+              <!-- Target line -->
+              <line x1="20" y1="22" x2="295" y2="22" stroke="rgba(108,99,255,.3)" stroke-width="1" stroke-dasharray="4"/>
+              <!-- Bars -->
+              <rect x="25" y="60" width="22" height="40" rx="4" fill="rgba(0,212,255,.15)"/>
+              <rect x="25" y="40" width="22" height="60" rx="4" fill="#00D4FF"/>
+
+              <rect x="60" y="60" width="22" height="40" rx="4" fill="rgba(0,212,255,.15)"/>
+              <rect x="60" y="55" width="22" height="45" rx="4" fill="#00D4FF"/>
+
+              <rect x="95" y="60" width="22" height="40" rx="4" fill="rgba(0,212,255,.15)"/>
+              <rect x="95" y="30" width="22" height="70" rx="4" fill="#00D4FF"/>
+
+              <rect x="130" y="60" width="22" height="40" rx="4" fill="rgba(0,212,255,.15)"/>
+              <rect x="130" y="50" width="22" height="50" rx="4" fill="#00D4FF"/>
+
+              <rect x="165" y="60" width="22" height="40" rx="4" fill="rgba(0,212,255,.15)"/>
+              <rect x="165" y="25" width="22" height="75" rx="4" fill="#00D4FF"/>
+
+              <rect x="200" y="60" width="22" height="40" rx="4" fill="rgba(0,212,255,.15)"/>
+              <rect x="200" y="35" width="22" height="65" rx="4" fill="#00D4FF"/>
+
+              <rect x="235" y="60" width="22" height="40" rx="4" fill="rgba(0,212,255,.15)"/>
+              <rect x="235" y="22" width="22" height="78" rx="4" fill="#00D4FF" opacity=".9"/>
+
+              <text x="22" y="108" font-size="8" fill="#8888AA">Mon</text>
+              <text x="57" y="108" font-size="8" fill="#8888AA">Tue</text>
+              <text x="92" y="108" font-size="8" fill="#8888AA">Wed</text>
+              <text x="127" y="108" font-size="8" fill="#8888AA">Thu</text>
+              <text x="162" y="108" font-size="8" fill="#8888AA">Fri</text>
+              <text x="197" y="108" font-size="8" fill="#8888AA">Sat</text>
+              <text x="232" y="108" font-size="8" fill="#8888AA">Sun</text>
+              <text x="246" y="18" font-size="8" fill="rgba(108,99,255,.7)">Goal</text>
+            </svg>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item" onclick="showScreen('home', null, 0)"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+          <div class="nav-item" onclick="showScreen('workout', null, 1)"><div class="nav-icon">🏋️</div><div class="nav-label">Workout</div></div>
+          <div class="nav-item" onclick="showScreen('diet', null, 2)"><div class="nav-icon">🥗</div><div class="nav-label">Diet</div></div>
+          <div class="nav-item active" onclick="showScreen('goals', null, 3)"><div class="nav-icon">🎯</div><div class="nav-label">Goals</div></div>
+          <div class="nav-item" onclick="showScreen('profile', null, 4)"><div class="nav-icon">👤</div><div class="nav-label">Profile</div></div>
+        </div>
+      </div>
+
+      <!-- ═══════ GOALS ═══════ -->
+      <div class="screen" id="goals">
+        <div class="screen-body">
+          <div style="padding:18px 16px 12px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-size:18px; font-weight:700; color:var(--text);">My Goals</div>
+            <div style="color:var(--primary); font-size:22px;">+</div>
+          </div>
+
+          <!-- Smart suggestion -->
+          <div class="suggestion-card">
+            <div class="sug-icon">💡</div>
+            <div>
+              <div class="sug-title">Smart Suggestion</div>
+              <div class="sug-text">Stay consistent! Users who log daily are 3x more likely to reach their goals.</div>
+            </div>
+          </div>
+
+          <div class="section-title">Active Goals</div>
+
+          <!-- Goal 1 -->
+          <div class="goal-card">
+            <div class="goal-header">
+              <div class="goal-icon" style="background:rgba(0,212,255,.15);">🔵</div>
+              <div>
+                <div class="goal-name">Weight Loss</div>
+                <div class="goal-sub">Target: 68 kg · 47 days remaining</div>
+              </div>
+            </div>
+            <div class="goal-prog-row">
+              <span style="color:var(--muted);">Progress</span>
+              <span style="color:var(--accent); font-weight:600;">42%</span>
+            </div>
+            <div class="prog-bar" style="background:rgba(0,212,255,.15);">
+              <div class="prog-fill" style="width:42%; background:var(--accent);"></div>
+            </div>
+          </div>
+
+          <!-- Goal 2 -->
+          <div class="goal-card">
+            <div class="goal-header">
+              <div class="goal-icon" style="background:rgba(0,229,160,.15);">🟢</div>
+              <div>
+                <div class="goal-name">Daily Steps</div>
+                <div class="goal-sub">Target: 10,000 steps/day</div>
+              </div>
+            </div>
+            <div class="goal-prog-row">
+              <span style="color:var(--muted);">Today</span>
+              <span style="color:var(--green); font-weight:600;">62%</span>
+            </div>
+            <div class="prog-bar" style="background:rgba(0,229,160,.15);">
+              <div class="prog-fill" style="width:62%; background:var(--green);"></div>
+            </div>
+          </div>
+
+          <!-- Goal 3 -->
+          <div class="goal-card">
+            <div class="goal-header">
+              <div class="goal-icon" style="background:rgba(255,107,53,.15);">🟠</div>
+              <div>
+                <div class="goal-name">Muscle Building</div>
+                <div class="goal-sub">3 workouts/week</div>
+              </div>
+            </div>
+            <div class="goal-prog-row">
+              <span style="color:var(--muted);">This week</span>
+              <span style="color:var(--orange); font-weight:600;">33%</span>
+            </div>
+            <div class="prog-bar" style="background:rgba(255,107,53,.15);">
+              <div class="prog-fill" style="width:33%; background:var(--orange);"></div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item" onclick="showScreen('home', null, 0)"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+          <div class="nav-item" onclick="showScreen('workout', null, 1)"><div class="nav-icon">🏋️</div><div class="nav-label">Workout</div></div>
+          <div class="nav-item" onclick="showScreen('diet', null, 2)"><div class="nav-icon">🥗</div><div class="nav-label">Diet</div></div>
+          <div class="nav-item active" onclick="showScreen('goals', null, 3)"><div class="nav-icon">🎯</div><div class="nav-label">Goals</div></div>
+          <div class="nav-item" onclick="showScreen('profile', null, 4)"><div class="nav-icon">👤</div><div class="nav-label">Profile</div></div>
+        </div>
+      </div>
+
+      <!-- ═══════ PROFILE ═══════ -->
+      <div class="screen" id="profile">
+        <div class="screen-body">
+          <div class="profile-header">
+            <div class="profile-avatar">S</div>
+            <div class="profile-name">Shivam Shelke</div>
+            <div class="profile-email">shivam@example.com</div>
+          </div>
+
+          <!-- Stats -->
+          <div class="stats-grid">
+            <div class="p-stat" style="border-color:rgba(108,99,255,.3); background:rgba(108,99,255,.1);">
+              <div style="font-size:16px;">🎯</div>
+              <div class="p-stat-val" style="color:var(--primary);">Weight Loss</div>
+              <div class="p-stat-lbl">Goal</div>
+            </div>
+            <div class="p-stat" style="border-color:rgba(0,229,160,.3); background:rgba(0,229,160,.1);">
+              <div style="font-size:16px;">📊</div>
+              <div class="p-stat-val" style="color:var(--green);">22.4</div>
+              <div class="p-stat-lbl">BMI</div>
+            </div>
+            <div class="p-stat" style="border-color:rgba(0,212,255,.3); background:rgba(0,212,255,.1);">
+              <div style="font-size:16px;">⚖️</div>
+              <div class="p-stat-val" style="color:var(--accent);">72.4kg</div>
+              <div class="p-stat-lbl">Weight</div>
+            </div>
+          </div>
+
+          <!-- AI Tips -->
+          <div style="padding:0 16px 10px; font-size:13px; font-weight:600; color:var(--text);">AI Diet Tips 🤖</div>
+          <div class="settings-item" style="margin-bottom:8px;">
+            <div class="settings-icon">🥩</div>
+            <div class="settings-info">
+              <div class="settings-sub">You're low on protein! Aim for 130g today. Add chicken, eggs, or Greek yogurt.</div>
+            </div>
+          </div>
+          <div class="settings-item">
+            <div class="settings-icon">💧</div>
+            <div class="settings-info">
+              <div class="settings-sub">Remember to drink at least 2.5L of water throughout the day.</div>
+            </div>
+          </div>
+
+          <!-- Settings -->
+          <div style="padding:12px 16px 8px; font-size:11px; font-weight:600; color:var(--muted); letter-spacing:.5px;">PROFILE</div>
+          <div class="settings-item">
+            <div class="settings-icon">👤</div>
+            <div class="settings-info">
+              <div class="settings-title">Edit Profile</div>
+              <div class="settings-sub">weight loss</div>
+            </div>
+            <span style="color:var(--border);">›</span>
+          </div>
+          <div class="settings-item">
+            <div class="settings-icon">⚖️</div>
+            <div class="settings-info">
+              <div class="settings-title">Body Stats</div>
+              <div class="settings-sub">72.4kg · 175cm</div>
+            </div>
+            <span style="color:var(--border);">›</span>
+          </div>
+
+          <div style="padding:12px 16px 8px; font-size:11px; font-weight:600; color:var(--muted); letter-spacing:.5px;">SETTINGS</div>
+          <div class="settings-item">
+            <div class="settings-icon">🔔</div>
+            <div class="settings-info">
+              <div class="settings-title">Notifications</div>
+              <div class="settings-sub">Workout & water reminders</div>
+            </div>
+            <span style="color:var(--border);">›</span>
+          </div>
+          <div class="settings-item">
+            <div class="settings-icon">🌙</div>
+            <div class="settings-info">
+              <div class="settings-title">Dark Mode</div>
+              <div class="settings-sub">Currently active</div>
+            </div>
+            <span style="color:var(--border);">›</span>
+          </div>
+
+          <!-- Logout -->
+          <div class="logout-btn">
+            <span>🚪</span> Sign Out
+          </div>
+          <div style="height:60px;"></div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item" onclick="showScreen('home', null, 0)"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+          <div class="nav-item" onclick="showScreen('workout', null, 1)"><div class="nav-icon">🏋️</div><div class="nav-label">Workout</div></div>
+          <div class="nav-item" onclick="showScreen('diet', null, 2)"><div class="nav-icon">🥗</div><div class="nav-label">Diet</div></div>
+          <div class="nav-item" onclick="showScreen('goals', null, 3)"><div class="nav-icon">🎯</div><div class="nav-label">Goals</div></div>
+          <div class="nav-item active" onclick="showScreen('profile', null, 4)"><div class="nav-icon">👤</div><div class="nav-label">Profile</div></div>
+        </div>
+      </div>
+
+    </div><!-- /phone -->
+    <div class="screen-label" id="screen-label">Splash Screen</div>
+  </div>
+</div>
+
+<script>
+  const screenNames = {
+    splash:   'Splash Screen',
+    login:    'Login Screen',
+    home:     'Home Dashboard',
+    workout:  'Workout Screen',
+    diet:     'Diet & Nutrition',
+    progress: 'Progress Charts',
+    goals:    'Goals Screen',
+    profile:  'Profile Screen',
+  };
+
+  function showScreen(name, tabBtn, navIndex) {
+    // Hide all screens
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    // Show target
+    document.getElementById(name).classList.add('active');
+    // Update tabs
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    if (tabBtn) tabBtn.classList.add('active');
+    else {
+      const tabs = document.querySelectorAll('.tab-btn');
+      const map = ['splash','login','home','workout','diet','progress','goals','profile'];
+      const idx = map.indexOf(name);
+      if (idx >= 0 && tabs[idx]) tabs[idx].classList.add('active');
+    }
+    // Label
+    document.getElementById('screen-label').textContent = screenNames[name] || name;
+    // Scroll phone to top
+    const body = document.getElementById(name).querySelector('.screen-body');
+    if (body) body.scrollTop = 0;
+  }
+</script>
+</body>
+</html>
