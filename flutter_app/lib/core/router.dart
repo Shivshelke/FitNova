@@ -38,11 +38,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           state.matchedLocation == AppRoutes.splash ||
           state.matchedLocation == AppRoutes.onboarding;
 
-      // If user is not logged in and not on an auth route, redirect to login
-      if (!isLoggedIn && !isAuthRoute) {
-        return AppRoutes.login;
-      }
-      // If user is logged in and going to auth route, redirect to home
+      // For development, we bypass the mandatory login redirect
+      // if (!isLoggedIn && !isAuthRoute) {
+      //   return AppRoutes.login;
+      // }
+
+      // If user is logged in (including Guest) and going to login/signup, redirect to home
       if (isLoggedIn && (state.matchedLocation == AppRoutes.login ||
           state.matchedLocation == AppRoutes.signup)) {
         return AppRoutes.home;

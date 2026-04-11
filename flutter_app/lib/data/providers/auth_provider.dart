@@ -15,12 +15,12 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
       try {
         return await _authService.getMe();
       } catch (_) {
-        // Token invalid/expired - clear and return null
-        await _authService.logout();
-        return null;
+        // Token invalid/expired - return guest user for development
+        return UserModel.guest();
       }
     }
-    return null;
+    // Return guest user by default to bypass login
+    return UserModel.guest();
   }
 
   /// Login with email + password

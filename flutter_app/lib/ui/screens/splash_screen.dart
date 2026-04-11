@@ -41,10 +41,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
     if (user != null) {
       context.go(AppRoutes.home);
-    } else if (!onboardingDone) {
-      context.go(AppRoutes.onboarding);
     } else {
-      context.go(AppRoutes.login);
+      // Default to home for development
+      context.go(AppRoutes.home);
     }
   }
 

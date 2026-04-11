@@ -130,4 +130,19 @@ class UserModel {
       profileComplete: profileComplete ?? this.profileComplete,
     );
   }
+
+  /// Default mock user for development
+  factory UserModel.guest() {
+    return UserModel(
+      id: 'guest_user_123',
+      name: 'Guest User',
+      email: 'guest@fitnova.app',
+      age: 25,
+      weight: 70,
+      height: 175,
+      gender: 'male',
+      goal: 'maintenance',
+      profileComplete: true,
+    );
+  }
 }
