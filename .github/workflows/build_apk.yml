@@ -26,6 +26,10 @@ jobs:
       - name: Flutter Doctor
         run: flutter doctor
           
+      - name: Create local.properties
+        run: |
+          echo "flutter.sdk=$FLUTTER_ROOT" > flutter_app/android/local.properties
+          
       - name: Install Dependencies
         run: |
           cd flutter_app
