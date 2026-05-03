@@ -184,6 +184,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                 ).animate(delay: 500.ms).fadeIn(),
 
+                const SizedBox(height: 16),
+
+                // Guest mode button
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed: () => context.go(AppRoutes.home),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppTheme.darkTextMuted,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    child: const Text('Continue as Guest',
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, decoration: TextDecoration.underline)),
+                  ),
+                ).animate(delay: 550.ms).fadeIn(),
+
                 const SizedBox(height: 32),
 
                 // Sign up link

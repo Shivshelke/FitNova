@@ -3,7 +3,7 @@ class AppConstants {
   // ── Backend API Base URL ──────────────────────────────────────────────────────
   // Use 10.0.2.2 for Android emulator (maps to host machine's localhost)
   // Change to your machine's local IP (e.g., 192.168.1.5) for real device
-  static const String baseUrl = 'http://10.0.2.2:3000/api';
+  static const String baseUrl = 'http://localhost:3000/api';
 
   // ── Auth endpoints ────────────────────────────────────────────────────────────
   static const String signupEndpoint = '/auth/signup';

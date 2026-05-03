@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme.dart';
+import '../../../core/router.dart';
 import '../../../data/providers/auth_provider.dart';
 import '../../../data/providers/goal_provider.dart';
 import '../../../data/providers/progress_provider.dart';
+import 'package:go_router/go_router.dart';
 
 /// Home / Dashboard screen
 /// Shows daily summary: steps, calories, water, macros, goals
@@ -50,17 +52,32 @@ class HomeScreen extends ConsumerWidget {
                                   fontWeight: FontWeight.bold)),
                         ],
                       ),
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          gradient: AppTheme.primaryGradient,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Center(
-                          child: Text(
-                            (user?.name.isNotEmpty ?? false) ? user!.name[0].toUpperCase() : 'A',
-                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+                      GestureDetector(
+                        onTap: () {
+                          if (user?.id == 'guest_user_123') {
+                            context.push(AppRoutes.login);
+                          }
+                        },
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            gradient: AppTheme.primaryGradient,
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: [
+                              if (user?.id == 'guest_user_123')
+                                BoxShadow(
+                                  color: AppTheme.primaryColor.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  spreadRadius: 1,
+                                ),
+                            ],
+                          ),
+                          child: Center(
+                            child: Text(
+                              (user?.name.isNotEmpty ?? false) ? user!.name[0].toUpperCase() : 'A',
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+                            ),
                           ),
                         ),
                       ),
@@ -88,10 +105,35 @@ class HomeScreen extends ConsumerWidget {
                             textAlign: TextAlign.center,
                             style: TextStyle(color: AppTheme.darkTextMuted)),
                         const SizedBox(height: 16),
-                        // Show demo data
-                        ElevatedButton(
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () => context.push(AppRoutes.login),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.primaryColor,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                              ),
+                              child: const Text('Log In'),
+                            ),
+                            const SizedBox(width: 12),
+                            OutlinedButton(
+                              onPressed: () => context.push(AppRoutes.signup),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: AppTheme.primaryColor),
+                                foregroundColor: AppTheme.primaryColor,
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                              ),
+                              child: const Text('Sign Up'),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        TextButton(
                           onPressed: () {},
-                          child: const Text('Using Demo Data'),
+                          child: const Text('Continue with Demo Data', 
+                            style: TextStyle(color: AppTheme.darkTextMuted)),
                         ),
                       ],
                     ),

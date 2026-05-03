@@ -1,57 +1,39 @@
-name: FitNova APK Build
+name: Build Flutter APK
 
 on:
   push:
     branches: [ main, master ]
-  workflow_dispatch:
+  workflow_dispatch: # Allows manual trigger
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v3
+      
+      - name: Set up Java
+        uses: actions/setup-java@v3
         with:
-          distribution: zulu
-          java-version: "17"
-
-      - uses: subosito/flutter-action@v2
+          distribution: 'zulu'
+          java-version: '17'
+          
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.19.6"
-          channel: stable
-          cache: true
-
-      - name: Create project and build APK
+          channel: 'stable'
+          
+      - name: Install Dependencies
         run: |
-          set -e
-          
-          echo "--- Flutter version ---"
-          flutter --version
-          
-          echo "--- Creating fresh project ---"
-          flutter create --project-name fitnova --org com.fitnova --platforms android /tmp/app
-          
-          echo "--- Copying our lib and pubspec ---"
-          rm -rf /tmp/app/lib
-          cp -r $GITHUB_WORKSPACE/flutter_app/lib /tmp/app/lib
-          cp $GITHUB_WORKSPACE/flutter_app/pubspec.yaml /tmp/app/pubspec.yaml
-          
-          echo "--- Setting minSdkVersion to 21 ---"
-          sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/' /tmp/app/android/app/build.gradle
-          
-          echo "--- flutter pub get ---"
-          cd /tmp/app
+          cd flutter_app
           flutter pub get
           
-          echo "--- Building APK ---"
+      - name: Build APK
+        run: |
+          cd flutter_app
           flutter build apk --debug
           
-          echo "--- APK info ---"
-          ls -lh build/app/outputs/flutter-apk/app-debug.apk
-
-      - uses: actions/upload-artifact@v4
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
         with:
-          name: FitNova-debug-APK
-          path: /tmp/app/build/app/outputs/flutter-apk/app-debug.apk
-          retention-days: 30
+          name: fitnova-debug-apk
+          path: flutter_app/build/app/outputs/flutter-apk/app-debug.apk

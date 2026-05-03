@@ -65,7 +65,7 @@ class ProfileScreen extends ConsumerWidget {
                           style: const TextStyle(
                               color: AppTheme.darkText, fontWeight: FontWeight.bold, fontSize: 20))
                           .animate(delay: 200.ms).fadeIn(),
-                      Text(user?.email ?? '',
+                      Text(user?.id == 'guest_user_123' ? 'Sign in to save your progress' : (user?.email ?? ''),
                           style: TextStyle(color: AppTheme.darkTextMuted, fontSize: 13))
                           .animate(delay: 250.ms).fadeIn(),
                     ],
@@ -96,7 +96,7 @@ class ProfileScreen extends ConsumerWidget {
                 _settingsTile(
                   icon: Icons.person_outline,
                   title: 'Edit Profile',
-                  subtitle: '${user?.goal?.replaceAll("_", " ") ?? "Set your goal"}',
+                  subtitle: user?.goal.replaceAll("_", " ") ?? "Set your goal",
                   onTap: () {},
                 ),
                 _settingsTile(
@@ -132,23 +132,58 @@ class ProfileScreen extends ConsumerWidget {
 
                 const SizedBox(height: 24),
 
-                // Logout button
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    icon: const Icon(Icons.logout, color: Colors.red),
-                    label: const Text('Sign Out', style: TextStyle(color: Colors.red)),
-                    onPressed: () async {
-                      await ref.read(authStateProvider.notifier).logout();
-                      if (context.mounted) context.go(AppRoutes.login);
-                    },
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Colors.red),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                // Auth Buttons or Logout button
+                if (user?.id == 'guest_user_123')
+                  Column(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          icon: const Icon(Icons.login),
+                          label: const Text('Log In'),
+                          onPressed: () => context.push(AppRoutes.login),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryColor,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          icon: const Icon(Icons.person_add_outlined),
+                          label: const Text('Create Account'),
+                          onPressed: () => context.push(AppRoutes.signup),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: AppTheme.primaryColor),
+                            foregroundColor: AppTheme.primaryColor,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ).animate(delay: 300.ms).fadeIn()
+                else
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.logout, color: Colors.red),
+                      label: const Text('Sign Out', style: TextStyle(color: Colors.red)),
+                      onPressed: () async {
+                        await ref.read(authStateProvider.notifier).logout();
+                        if (context.mounted) context.go(AppRoutes.login);
+                      },
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Colors.red),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      ),
                     ),
-                  ),
-                ).animate(delay: 300.ms).fadeIn(),
+                  ).animate(delay: 300.ms).fadeIn(),
 
                 const SizedBox(height: 80),
               ]),
